@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Drivers — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <h4 class="fw-bold mb-0">Drivers</h4>
+    <small class="text-muted">{{ drivers|length }} driver(s) registered</small>
+  </div>
+  {% if user.role in ['ADMIN', 'FLEET_MANAGER'] %}
+  <a href="/drivers/new" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1"></i>Add Driver Profile
+  </a>
+  {% endif %}
+</div>
+
+<div class="card stat-card">
+  <table class="table table-hover mb-0">
+    <thead><tr>
+      <th>Name</th><th>Email</th><th>License No.</th><th>License Expiry</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for d in drivers %}
+      <tr>
+        <td class="fw-semibold">{{ d.user.name }}</td>
+        <td>{{ d.user.email }}</td>
+        <td>{{ d.license_number }}</td>
+        <td>
+          {% set today = namespace(val=none) %}
+          {{ d.license_expiry }}
+        </td>
+        <td>
+          {% if user.role in ['ADMIN', 'FLEET_MANAGER'] %}
+          <a href="/drivers/{{ d.id }}/edit" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil"></i>
+          </a>
+          {% endif %}
+          {% if user.role == 'ADMIN' %}
+          <form method="post" action="/drivers/{{ d.id }}/delete" class="d-inline"
+                onsubmit="return confirm('Delete this driver profile?')">
+            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">No driver profiles found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

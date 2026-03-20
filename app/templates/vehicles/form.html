@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{% if vehicle %}Edit{% else %}New{% endif %} Vehicle — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h4 class="fw-bold mb-0">{% if vehicle %}Edit Vehicle{% else %}Add Vehicle{% endif %}</h4>
+  <a href="/vehicles" class="btn btn-outline-secondary btn-sm">← Back</a>
+</div>
+
+<div class="card stat-card p-4" style="max-width:600px">
+  <form method="post" action="{% if vehicle %}/vehicles/{{ vehicle.id }}/edit{% else %}/vehicles/new{% endif %}">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Plate *</label>
+        <input type="text" name="plate" class="form-control" required
+               value="{{ vehicle.plate if vehicle else '' }}" placeholder="AA-00-AA" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Brand *</label>
+        <input type="text" name="brand" class="form-control" required
+               value="{{ vehicle.brand if vehicle else '' }}" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Model *</label>
+        <input type="text" name="model" class="form-control" required
+               value="{{ vehicle.model if vehicle else '' }}" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Year *</label>
+        <input type="number" name="year" class="form-control" required min="1990" max="2100"
+               value="{{ vehicle.year if vehicle else '' }}" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Color</label>
+        <input type="text" name="color" class="form-control"
+               value="{{ vehicle.color if vehicle and vehicle.color else '' }}" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Fuel Type *</label>
+        <select name="fuel_type" class="form-select" required>
+          {% for ft in fuel_types %}
+          <option value="{{ ft }}" {% if vehicle and vehicle.fuel_type == ft %}selected{% endif %}>{{ ft }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Current KM</label>
+        <input type="number" name="current_km" class="form-control" min="0"
+               value="{{ vehicle.current_km if vehicle else 0 }}" />
+      </div>
+      {% if vehicle %}
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Status *</label>
+        <select name="vehicle_status" class="form-select" required>
+          {% for s in statuses %}
+          <option value="{{ s }}" {% if vehicle.status == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="col-12">
+        <label class="form-label fw-semibold">Notes</label>
+        <textarea name="notes" class="form-control" rows="3">{{ vehicle.notes if vehicle and vehicle.notes else '' }}</textarea>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary">Save Vehicle</button>
+      {% if vehicle and user.role == 'ADMIN' %}
+      <form method="post" action="/vehicles/{{ vehicle.id }}/delete" class="d-inline"
+            onsubmit="return confirm('Delete this vehicle? This cannot be undone.')">
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
+      </form>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

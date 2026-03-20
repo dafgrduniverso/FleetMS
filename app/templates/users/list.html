@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Users — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <h4 class="fw-bold mb-0">Users</h4>
+    <small class="text-muted">{{ users|length }} user(s)</small>
+  </div>
+  <a href="/users/new" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1"></i>Add User
+  </a>
+</div>
+
+<div class="card stat-card">
+  <table class="table table-hover mb-0">
+    <thead><tr>
+      <th>Name</th><th>Email</th><th>Role</th><th>Active</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td class="fw-semibold">{{ u.name }}</td>
+        <td>{{ u.email }}</td>
+        <td>
+          {% if u.role == 'ADMIN' %}<span class="badge bg-danger">Admin</span>
+          {% elif u.role == 'FLEET_MANAGER' %}<span class="badge bg-primary">Fleet Manager</span>
+          {% elif u.role == 'FINANCE' %}<span class="badge bg-info text-dark">Finance</span>
+          {% else %}<span class="badge bg-secondary">Employee</span>{% endif %}
+        </td>
+        <td>
+          {% if u.is_active %}<i class="bi bi-check-circle-fill text-success"></i>
+          {% else %}<i class="bi bi-x-circle-fill text-danger"></i>{% endif %}
+        </td>
+        <td>
+          <a href="/users/{{ u.id }}/edit" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil"></i>
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

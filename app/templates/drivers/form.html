@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{% if driver %}Edit Driver{% else %}Add Driver Profile{% endif %} — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h4 class="fw-bold mb-0">{% if driver %}Edit Driver Profile{% else %}Add Driver Profile{% endif %}</h4>
+  <a href="/drivers" class="btn btn-outline-secondary btn-sm">← Back</a>
+</div>
+
+<div class="card stat-card p-4" style="max-width:500px">
+  <form method="post" action="{% if driver %}/drivers/{{ driver.id }}/edit{% else %}/drivers/new{% endif %}">
+    {% if not driver %}
+    <div class="mb-3">
+      <label class="form-label fw-semibold">User *</label>
+      <select name="user_id" class="form-select" required>
+        <option value="">— Select a user —</option>
+        {% for u in eligible_users %}
+        <option value="{{ u.id }}">{{ u.name }} ({{ u.email }})</option>
+        {% endfor %}
+      </select>
+      <div class="form-text">Only users without an existing driver profile are shown.</div>
+    </div>
+    {% else %}
+    <div class="mb-3">
+      <label class="form-label fw-semibold">User</label>
+      <input type="text" class="form-control" value="{{ driver.user.name }}" disabled />
+    </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">License Number *</label>
+      <input type="text" name="license_number" class="form-control" required
+             value="{{ driver.license_number if driver else '' }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">License Expiry Date *</label>
+      <input type="date" name="license_expiry" class="form-control" required
+             value="{{ driver.license_expiry if driver else '' }}" />
+    </div>
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Notes</label>
+      <textarea name="notes" class="form-control" rows="3">{{ driver.notes if driver and driver.notes else '' }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+</div>
+{% endblock %}

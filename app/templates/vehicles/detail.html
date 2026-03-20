@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ vehicle.brand }} {{ vehicle.model }} — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <h4 class="fw-bold mb-0">{{ vehicle.brand }} {{ vehicle.model }}</h4>
+    <small class="text-muted">{{ vehicle.plate }}</small>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="/vehicles" class="btn btn-outline-secondary btn-sm">← Back</a>
+    {% if user.role in ['ADMIN', 'FLEET_MANAGER'] %}
+    <a href="/vehicles/{{ vehicle.id }}/edit" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-pencil"></i> Edit
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card stat-card p-4">
+      <h6 class="text-muted fw-semibold mb-3">Vehicle Details</h6>
+      <dl class="row mb-0">
+        <dt class="col-5">Plate</dt><dd class="col-7">{{ vehicle.plate }}</dd>
+        <dt class="col-5">Brand</dt><dd class="col-7">{{ vehicle.brand }}</dd>
+        <dt class="col-5">Model</dt><dd class="col-7">{{ vehicle.model }}</dd>
+        <dt class="col-5">Year</dt><dd class="col-7">{{ vehicle.year }}</dd>
+        <dt class="col-5">Color</dt><dd class="col-7">{{ vehicle.color or '—' }}</dd>
+        <dt class="col-5">Fuel</dt><dd class="col-7">{{ vehicle.fuel_type }}</dd>
+        <dt class="col-5">KM</dt><dd class="col-7">{{ "{:,}".format(vehicle.current_km) }}</dd>
+        <dt class="col-5">Status</dt>
+        <dd class="col-7">
+          {% if vehicle.status == 'AVAILABLE' %}<span class="badge bg-success">Available</span>
+          {% elif vehicle.status == 'IN_USE' %}<span class="badge bg-primary">In Use</span>
+          {% elif vehicle.status == 'MAINTENANCE' %}<span class="badge bg-warning text-dark">Maintenance</span>
+          {% else %}<span class="badge bg-secondary">Decommissioned</span>{% endif %}
+        </dd>
+        {% if vehicle.notes %}
+        <dt class="col-5">Notes</dt><dd class="col-7">{{ vehicle.notes }}</dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+</div>
+
+<!-- Maintenance history -->
+<h6 class="fw-semibold text-muted mb-2">Maintenance History</h6>
+<div class="card stat-card mb-4">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>Date</th><th>Type</th><th>KM</th><th>Cost</th><th>Description</th></tr></thead>
+    <tbody>
+      {% for r in maintenance_records %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td><span class="badge bg-secondary">{{ r.maintenance_type }}</span></td>
+        <td>{{ "{:,}".format(r.km_at_service) if r.km_at_service else '—' }}</td>
+        <td>{% if r.cost %}€{{ "%.2f"|format(r.cost) }}{% else %}—{% endif %}</td>
+        <td>{{ r.description or '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-3">No maintenance records.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Contract history -->
+<h6 class="fw-semibold text-muted mb-2">Contract History</h6>
+<div class="card stat-card">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>Driver</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for c in contracts %}
+      <tr>
+        <td>{{ c.driver.name }}</td>
+        <td>{{ c.start_date }}</td>
+        <td>{{ c.end_date or '—' }}</td>
+        <td>
+          {% if c.status == 'ACTIVE' %}<span class="badge bg-success">Active</span>
+          {% elif c.status == 'EXPIRED' %}<span class="badge bg-secondary">Expired</span>
+          {% else %}<span class="badge bg-danger">Cancelled</span>{% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="text-center text-muted py-3">No contracts.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

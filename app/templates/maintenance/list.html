@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Maintenance — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <h4 class="fw-bold mb-0">Maintenance Records</h4>
+    <small class="text-muted">{{ records|length }} record(s)</small>
+  </div>
+  {% if user.role in ['ADMIN', 'FLEET_MANAGER'] %}
+  <a href="/maintenance/new" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1"></i>Add Record
+  </a>
+  {% endif %}
+</div>
+
+<div class="card stat-card">
+  <table class="table table-hover mb-0">
+    <thead><tr>
+      <th>Vehicle</th><th>Type</th><th>Date</th><th>KM</th><th>Cost</th><th>Description</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td>{{ r.vehicle.brand }} {{ r.vehicle.model }}<br/>
+          <small class="text-muted">{{ r.vehicle.plate }}</small></td>
+        <td><span class="badge bg-secondary">{{ r.maintenance_type }}</span></td>
+        <td>{{ r.date }}</td>
+        <td>{{ "{:,}".format(r.km_at_service) if r.km_at_service else '—' }}</td>
+        <td>{% if r.cost %}€{{ "%.2f"|format(r.cost) }}{% else %}—{% endif %}</td>
+        <td>{{ (r.description or '—')[:60] }}</td>
+        <td>
+          {% if user.role in ['ADMIN', 'FLEET_MANAGER'] %}
+          <a href="/maintenance/{{ r.id }}/edit" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form method="post" action="/maintenance/{{ r.id }}/delete" class="d-inline"
+                onsubmit="return confirm('Delete this record?')">
+            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center text-muted py-4">No maintenance records found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

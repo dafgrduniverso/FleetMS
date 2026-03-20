@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{% if contract %}Edit Contract{% else %}New Contract{% endif %} — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h4 class="fw-bold mb-0">{% if contract %}Edit Contract{% else %}New Contract{% endif %}</h4>
+  <a href="/contracts" class="btn btn-outline-secondary btn-sm">← Back</a>
+</div>
+
+<div class="card stat-card p-4" style="max-width:600px">
+  <form method="post" action="{% if contract %}/contracts/{{ contract.id }}/edit{% else %}/contracts/new{% endif %}">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label fw-semibold">Vehicle *</label>
+        <select name="vehicle_id" class="form-select" required>
+          <option value="">— Select vehicle —</option>
+          {% for v in vehicles %}
+          <option value="{{ v.id }}"
+            {% if contract and contract.vehicle_id == v.id %}selected{% endif %}>
+            {{ v.brand }} {{ v.model }} — {{ v.plate }}
+            {% if not contract %}({{ v.status }}){% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label fw-semibold">Driver *</label>
+        <select name="driver_id" class="form-select" required>
+          <option value="">— Select driver —</option>
+          {% for d in drivers %}
+          <option value="{{ d.user_id }}"
+            {% if contract and contract.driver_id == d.user_id %}selected{% endif %}>
+            {{ d.user.name }} ({{ d.license_number }})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Start Date *</label>
+        <input type="date" name="start_date" class="form-control" required
+               value="{{ contract.start_date if contract else '' }}" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">End Date</label>
+        <input type="date" name="end_date" class="form-control"
+               value="{{ contract.end_date if contract and contract.end_date else '' }}" />
+      </div>
+      {% if contract %}
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Status *</label>
+        <select name="contract_status" class="form-select" required>
+          {% for s in statuses %}
+          <option value="{{ s }}" {% if contract.status == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="col-12">
+        <label class="form-label fw-semibold">Notes</label>
+        <textarea name="notes" class="form-control" rows="3">{{ contract.notes if contract and contract.notes else '' }}</textarea>
+      </div>
+    </div>
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary">Save Contract</button>
+      {% if contract and user.role == 'ADMIN' %}
+      <form method="post" action="/contracts/{{ contract.id }}/delete" class="d-inline"
+            onsubmit="return confirm('Delete this contract?')">
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
+      </form>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

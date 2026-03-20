@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{% if target %}Edit User{% else %}New User{% endif %} — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h4 class="fw-bold mb-0">{% if target %}Edit User{% else %}Add User{% endif %}</h4>
+  <a href="/users" class="btn btn-outline-secondary btn-sm">← Back</a>
+</div>
+
+<div class="card stat-card p-4" style="max-width:480px">
+  {% if error %}
+  <div class="alert alert-danger py-2 small">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="{% if target %}/users/{{ target.id }}/edit{% else %}/users/new{% endif %}">
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Full Name *</label>
+      <input type="text" name="name" class="form-control" required
+             value="{{ target.name if target else '' }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Email *</label>
+      <input type="email" name="email" class="form-control" required
+             value="{{ target.email if target else '' }}" />
+    </div>
+    {% if not target %}
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Password *</label>
+      <input type="password" name="password" class="form-control" required minlength="8" />
+      <div class="form-text">Minimum 8 characters.</div>
+    </div>
+    {% endif %}
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Role *</label>
+      <select name="role" class="form-select" required>
+        {% for r in roles %}
+        <option value="{{ r }}" {% if target and target.role == r %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% if target %}
+    <div class="mb-4 form-check">
+      <input type="checkbox" name="is_active" class="form-check-input" id="is_active"
+             value="true" {% if target.is_active %}checked{% endif %} />
+      <label class="form-check-label" for="is_active">Active</label>
+    </div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Save User</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{% if record %}Edit Record{% else %}Add Maintenance Record{% endif %} — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h4 class="fw-bold mb-0">{% if record %}Edit Maintenance Record{% else %}Add Maintenance Record{% endif %}</h4>
+  <a href="/maintenance" class="btn btn-outline-secondary btn-sm">← Back</a>
+</div>
+
+<div class="card stat-card p-4" style="max-width:600px">
+  <form method="post" action="{% if record %}/maintenance/{{ record.id }}/edit{% else %}/maintenance/new{% endif %}">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label fw-semibold">Vehicle *</label>
+        <select name="vehicle_id" class="form-select" required>
+          <option value="">— Select vehicle —</option>
+          {% for v in vehicles %}
+          <option value="{{ v.id }}"
+            {% if record and record.vehicle_id == v.id %}selected{% endif %}>
+            {{ v.brand }} {{ v.model }} — {{ v.plate }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Type *</label>
+        <select name="maintenance_type" class="form-select" required>
+          {% for t in maintenance_types %}
+          <option value="{{ t }}" {% if record and record.maintenance_type == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Date *</label>
+        <input type="date" name="date" class="form-control" required
+               value="{{ record.date if record else '' }}" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Cost (€)</label>
+        <input type="number" name="cost" class="form-control" step="0.01" min="0"
+               value="{{ record.cost if record and record.cost else '' }}" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">KM at Service</label>
+        <input type="number" name="km_at_service" class="form-control" min="0"
+               value="{{ record.km_at_service if record and record.km_at_service else '' }}" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Next Service KM</label>
+        <input type="number" name="next_service_km" class="form-control" min="0"
+               value="{{ record.next_service_km if record and record.next_service_km else '' }}" />
+      </div>
+      <div class="col-12">
+        <label class="form-label fw-semibold">Description</label>
+        <textarea name="description" class="form-control" rows="3">{{ record.description if record and record.description else '' }}</textarea>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Save Record</button>
+  </form>
+</div>
+{% endblock %}

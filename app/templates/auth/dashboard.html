@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <h4 class="fw-bold mb-0">Dashboard</h4>
+    <small class="text-muted">Welcome back, {{ user.name }}</small>
+  </div>
+</div>
+
+<!-- Stat cards -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card stat-card p-3">
+      <div class="text-muted small">Total Vehicles</div>
+      <div class="fs-2 fw-bold">{{ total_vehicles }}</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card stat-card p-3 border-start border-success border-3">
+      <div class="text-muted small">Available</div>
+      <div class="fs-2 fw-bold text-success">{{ available }}</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card stat-card p-3 border-start border-primary border-3">
+      <div class="text-muted small">In Use</div>
+      <div class="fs-2 fw-bold text-primary">{{ in_use }}</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card stat-card p-3 border-start border-warning border-3">
+      <div class="text-muted small">In Maintenance</div>
+      <div class="fs-2 fw-bold text-warning">{{ in_maintenance }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card stat-card p-3">
+      <div class="text-muted small">Active Contracts</div>
+      <div class="fs-2 fw-bold text-info">{{ active_contracts }}</div>
+      <a href="/contracts" class="small mt-1 d-block">View all →</a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent maintenance -->
+{% if recent_maintenance %}
+<div class="mt-4">
+  <h6 class="fw-semibold text-muted mb-2">Recent Maintenance</h6>
+  <div class="card stat-card">
+    <table class="table table-hover mb-0">
+      <thead><tr>
+        <th>Vehicle</th><th>Type</th><th>Date</th><th>Cost</th>
+      </tr></thead>
+      <tbody>
+        {% for r in recent_maintenance %}
+        <tr>
+          <td>{{ r.vehicle.brand }} {{ r.vehicle.model }} ({{ r.vehicle.plate }})</td>
+          <td><span class="badge bg-secondary">{{ r.maintenance_type }}</span></td>
+          <td>{{ r.date }}</td>
+          <td>{% if r.cost %}€{{ "%.2f"|format(r.cost) }}{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

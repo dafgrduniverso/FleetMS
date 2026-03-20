@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}My Profile — Fleet MS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h4 class="fw-bold mb-0">My Profile</h4>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="card stat-card p-4 mb-3">
+      <h6 class="text-muted fw-semibold mb-3">Account Info</h6>
+      <dl class="row mb-0">
+        <dt class="col-4">Name</dt><dd class="col-8">{{ user.name }}</dd>
+        <dt class="col-4">Email</dt><dd class="col-8">{{ user.email }}</dd>
+        <dt class="col-4">Role</dt><dd class="col-8">{{ user.role }}</dd>
+      </dl>
+    </div>
+
+    <div class="card stat-card p-4">
+      <h6 class="text-muted fw-semibold mb-3">Change Password</h6>
+
+      {% if error %}
+      <div class="alert alert-danger py-2 small">{{ error }}</div>
+      {% endif %}
+      {% if success %}
+      <div class="alert alert-success py-2 small">{{ success }}</div>
+      {% endif %}
+
+      <form method="post" action="/users/profile/change-password">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Current Password</label>
+          <input type="password" name="current_password" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">New Password</label>
+          <input type="password" name="new_password" class="form-control" required minlength="8" />
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Confirm New Password</label>
+          <input type="password" name="confirm_password" class="form-control" required minlength="8" />
+        </div>
+        <button type="submit" class="btn btn-primary">Update Password</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
