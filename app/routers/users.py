@@ -3,6 +3,8 @@ User management routes (Admin only for most actions).
 Also handles the profile/change-password page for all users.
 """
 
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -13,7 +15,8 @@ from app.database import get_db
 from app.models import Role, User
 
 router = APIRouter(prefix="/users")
-templates = Jinja2Templates(directory="app/templates")
+_TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
+templates = Jinja2Templates(directory=str(_TEMPLATE_DIR))
 
 
 @router.get("", response_class=HTMLResponse)

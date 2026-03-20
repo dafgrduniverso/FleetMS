@@ -4,6 +4,8 @@ Vehicle management routes.
 - Accessible by Admin and Fleet Manager; Employees see only their assigned vehicle
 """
 
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -14,7 +16,8 @@ from app.database import get_db
 from app.models import Contract, ContractStatus, FuelType, Role, User, Vehicle, VehicleStatus
 
 router = APIRouter(prefix="/vehicles")
-templates = Jinja2Templates(directory="app/templates")
+_TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
+templates = Jinja2Templates(directory=str(_TEMPLATE_DIR))
 
 MANAGERS = (Role.ADMIN, Role.FLEET_MANAGER)
 

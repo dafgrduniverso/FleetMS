@@ -5,6 +5,8 @@ Registers all routers and creates the database tables on first run.
 Run with:  python -m uvicorn app.main:app --reload
 """
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
@@ -23,7 +25,8 @@ seed_admin()
 app = FastAPI(title="Fleet Management System", docs_url=None, redoc_url=None)
 
 # Serve static files (custom CSS, images)
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+BASE_DIR = Path(__file__).resolve().parent
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
 # Register feature routers
 app.include_router(auth.router)

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from pathlib import Path; p = Path\\(''app/routers/auth.py''\\).resolve\\(\\).parent.parent / ''templates''; print\\(p\\); print\\(p.exists\\(\\)\\)\")"
+    ]
+  }
+}

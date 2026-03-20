@@ -3,6 +3,7 @@ Authentication routes: login, logout, dashboard.
 """
 
 from datetime import timedelta
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -19,7 +20,8 @@ from app.database import get_db
 from app.models import Contract, MaintenanceRecord, User, Vehicle, VehicleStatus
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
+_TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
+templates = Jinja2Templates(directory=str(_TEMPLATE_DIR))
 
 
 @router.get("/login", response_class=HTMLResponse)

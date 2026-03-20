@@ -3,6 +3,8 @@ Driver profile routes.
 A Driver profile is an extension of a User account with license info.
 """
 
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -13,7 +15,8 @@ from app.database import get_db
 from app.models import Driver, Role, User
 
 router = APIRouter(prefix="/drivers")
-templates = Jinja2Templates(directory="app/templates")
+_TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
+templates = Jinja2Templates(directory=str(_TEMPLATE_DIR))
 
 MANAGERS = (Role.ADMIN, Role.FLEET_MANAGER)
 
