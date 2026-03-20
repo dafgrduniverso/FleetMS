@@ -1,3 +1,5 @@
 .env
-keys.txt 
-fleet.db 
+keys.txt
+fleet.db
+__pycache__/
+*.pyc
