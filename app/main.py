@@ -26,7 +26,9 @@ app = FastAPI(title="Fleet Management System", docs_url=None, redoc_url=None)
 
 # Serve static files (custom CSS, images)
 BASE_DIR = Path(__file__).resolve().parent
-app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+_static_dir = BASE_DIR / "static"
+_static_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
 
 # Register feature routers
 app.include_router(auth.router)
