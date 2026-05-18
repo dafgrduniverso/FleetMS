@@ -1,5 +1,17 @@
-.env
-keys.txt
-fleet.db
+# Python cache
 __pycache__/
 *.pyc
+
+# Local AI / Tool state
+.claude/
+
+# Runtime uploads & personal notes
+app/uploads/
+notes.docx
+
+# Secrets (Double-check that your actual .env is ignored)
+.env
+keys.txt
+
+#local db
+fleet.db
